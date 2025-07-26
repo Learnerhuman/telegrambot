@@ -58,7 +58,7 @@ async def save_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     contact = update.message.contact
     user_id = update.effective_user.id
     user_data[user_id] = {"phone": contact.phone_number}
-    await update.message.reply_text("Raqam qabul qilindi. Ismingizni kiriting:", reply_markup=ReplyKeyboardRemove())
+    await update.message.reply_text("Raqam qabul qilindi. Ismingizni kiriting:\n bekor qilish uchun /cancel", reply_markup=ReplyKeyboardRemove())
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -72,7 +72,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if "first_name" not in data:
         data["first_name"] = text
-        await update.message.reply_text("Familiyangizni kiriting:")
+        await update.message.reply_text("Familiyangizni kiriting:\n bekor qilish uchun /cancel")
     elif "last_name" not in data:
         data["last_name"] = text
         await send_direction_buttons(update)
@@ -84,9 +84,9 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 save_user_data(user_id, data)
                 await update.message.reply_text("""Ma'lumotlar saqlandi. Rahmat!\nReytingni ko'rish uchun bosing /reyting\nAgar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
             else:
-                await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.")
+                await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.\n bekor qilish uchun /cancel")
         except ValueError:
-            await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).")
+            await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).\n bekor qilish uchun /cancel")
     else:
         await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz. /cancel orqali o'chiring.")
 
@@ -107,7 +107,7 @@ async def select_direction(update: Update, context: ContextTypes.DEFAULT_TYPE):
     direction = update.callback_query.data
     user_data[user_id]["direction"] = direction
     await update.callback_query.answer()
-    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (0 < x ≤ 100):")
+    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (0 < x ≤ 100):\n bekor qilish uchun /cancel")
 
 def save_user_data(user_id, data):
     try:
@@ -134,14 +134,14 @@ async def cancel_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
             json.dump(all_data, f, indent=4)
         await update.message.reply_text("Ma'lumotlaringiz o'chirildi. Qayta boshlash uchun /start ni bosing.")
     else:
-        await update.message.reply_text("Sizda saqlangan ma'lumot yo'q.")
+        await update.message.reply_text("Sizda saqlangan ma'lumot yo'q, boshlash uchun /start ni bosing.")
 
 async def show_rating(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         with open("data.json", "r") as f:
             all_data = json.load(f)
     except FileNotFoundError:
-        await update.message.reply_text("Hozircha reyting mavjud emas.")
+        await update.message.reply_text("Hozircha reyting mavjud emas, boshlash uchun /start ni bosing.")
         return
 
     direction_users = {}
@@ -158,7 +158,7 @@ async def show_rating(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for i, (ism, fam, ball) in enumerate(users, 1):
             msg += f"{i}. {ism} {fam} — {ball}\n"
 
-    await update.message.reply_text(msg or "Reyting mavjud emas.")
+    await update.message.reply_text(msg or "Reyting mavjud emas, boshlash uchun /start ni bosing.")
 
 async def show_all_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
