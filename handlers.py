@@ -83,8 +83,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 data["score"] = score
                 save_user_data(user_id, data)
                 await update.message.reply_text("""Ma'lumotlar saqlandi. Rahmat!
-                                                Reytingni ko'rish uchun bosing /reyting
-                                                Agar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
+                                                   Reytingni ko'rish uchun bosing /reyting
+                                                   Agar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
             else:
                 await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.")
         except ValueError:
