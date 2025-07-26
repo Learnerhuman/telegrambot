@@ -58,7 +58,7 @@ async def save_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
     contact = update.message.contact
     user_id = update.effective_user.id
     user_data[user_id] = {"phone": contact.phone_number}
-    await update.message.reply_text("Raqam qabul qilindi. Ismingizni kiriting:\n bekor qilish uchun /cancel", reply_markup=ReplyKeyboardRemove())
+    await update.message.reply_text("Raqam qabul qilindi. Ismingizni kiriting:\nBekor qilish uchun /cancel", reply_markup=ReplyKeyboardRemove())
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -72,7 +72,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if "first_name" not in data:
         data["first_name"] = text
-        await update.message.reply_text("Familiyangizni kiriting:\n bekor qilish uchun /cancel")
+        await update.message.reply_text("Familiyangizni kiriting:\nBekor qilish uchun /cancel")
     elif "last_name" not in data:
         data["last_name"] = text
         await send_direction_buttons(update)
@@ -84,11 +84,11 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 save_user_data(user_id, data)
                 await update.message.reply_text("""Ma'lumotlar saqlandi. Rahmat!\nReytingni ko'rish uchun bosing /reyting\nAgar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
             else:
-                await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.\n bekor qilish uchun /cancel")
+                await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.\nBekor qilish uchun /cancel")
         except ValueError:
-            await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).\n bekor qilish uchun /cancel")
+            await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).\nBekor qilish uchun /cancel")
     else:
-        await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz. /cancel orqali o'chiring.")
+        await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz\n/cancel orqali o'chiring.")
 
 async def send_direction_buttons(update: Update):
     buttons = [
@@ -107,7 +107,7 @@ async def select_direction(update: Update, context: ContextTypes.DEFAULT_TYPE):
     direction = update.callback_query.data
     user_data[user_id]["direction"] = direction
     await update.callback_query.answer()
-    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (0 < x ≤ 100):\n bekor qilish uchun /cancel")
+    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (0 < x ≤ 100):\nBekor qilish uchun /cancel")
 
 def save_user_data(user_id, data):
     try:
