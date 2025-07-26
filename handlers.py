@@ -19,9 +19,9 @@ def get_handlers():
         CommandHandler("reyting", show_rating),
         CommandHandler("id", get_id),
         CommandHandler("admin", show_all_data),
-        CommandHandler("foydalanuvchilar_soni", count_users),
-        CommandHandler("ochirish", delete_user),
-        CommandHandler("yangila", update_score)
+        CommandHandler("count_users", count_users),
+        CommandHandler("delete", delete_user),
+        CommandHandler("update", update_score)
     ]
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -79,14 +79,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif "direction" in data and "score" not in data:
         try:
             score = float(text)
-            if 0 < score <= 100:
+            if 56 <= score <= 100:
                 data["score"] = score
                 save_user_data(user_id, data)
                 await update.message.reply_text("""Ma'lumotlar saqlandi. Rahmat!\nReytingni ko'rish uchun bosing /reyting\nAgar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
             else:
                 await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.\nBekor qilish uchun /cancel")
         except ValueError:
-            await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).\nBekor qilish uchun /cancel")
+            await update.message.reply_text("Faqat son kiriting (56 <= x ≤ 100).\nBekor qilish uchun /cancel")
     else:
         await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz\n/cancel orqali o'chiring.")
 
@@ -107,7 +107,7 @@ async def select_direction(update: Update, context: ContextTypes.DEFAULT_TYPE):
     direction = update.callback_query.data
     user_data[user_id]["direction"] = direction
     await update.callback_query.answer()
-    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (0 < x ≤ 100):\nBekor qilish uchun /cancel")
+    await update.callback_query.edit_message_text(f"Tanlangan yo'nalish: {direction}\nEndi ballni kiriting (56<= x ≤ 100):\nBekor qilish uchun /cancel")
 
 def save_user_data(user_id, data):
     try:
@@ -215,7 +215,7 @@ async def update_score(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid, score = args
     try:
         score = float(score)
-        if not (0 < score <= 100):
+        if not (56 <= score <= 100):
             raise ValueError
         with open("data.json", "r") as f:
             all_data = json.load(f)
