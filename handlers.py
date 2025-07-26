@@ -15,7 +15,7 @@ def get_handlers():
         MessageHandler(filters.CONTACT, save_contact),
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text),
         CallbackQueryHandler(select_direction),
-        CommandHandler("bekor_qilish", cancel_data),
+        CommandHandler("cancel", cancel_data),
         CommandHandler("reyting", show_rating),
         CommandHandler("id", get_id),
         CommandHandler("admin", show_all_data),
@@ -42,8 +42,8 @@ Yo'nalish tanlaysiz:
 0 < x ≤ 100 oraliqda ball kiritasiz  
 Kiritgan ma'lumotingiz reytingga qo'shiladi  
 Istalgan vaqtda:
-    /bekor_qilish — ma'lumotlaringizni o'chirish  
-    /reyting — barcha yo'nalishlar bo'yicha reytingni ko'rish  
+    /cancel — ma'lumotlaringizni o'chirish  
+    /reyting — yo'nalishiz bo'yicha reytingni ko'rish  
  Ma'lumot o'chirilgandan so'ng /start orqali qayta kiritishingiz mumkin
 
 📞 Davom etish uchun telefon raqamingizni yuboring.
@@ -82,13 +82,15 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if 0 < score <= 100:
                 data["score"] = score
                 save_user_data(user_id, data)
-                await update.message.reply_text("Ma'lumotlar saqlandi. Rahmat!", reply_markup=ReplyKeyboardRemove())
+                await update.message.reply_text("""Ma'lumotlar saqlandi. Rahmat!
+                                                Reytingni ko'rish uchun bosing /reyting
+                                                Agar noto'gri ma'lumot kiritgan bo'lsangiz /cancel""", reply_markup=ReplyKeyboardRemove())
             else:
                 await update.message.reply_text("Iltimos, ballni 0 dan katta va 100 dan kichik qilib kiriting.")
         except ValueError:
             await update.message.reply_text("Faqat son kiriting (0 < x ≤ 100).")
     else:
-        await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz. /bekor_qilish orqali o'chiring.")
+        await update.message.reply_text("Siz allaqachon ma'lumot kiritgansiz. /cancel orqali o'chiring.")
 
 async def send_direction_buttons(update: Update):
     buttons = [
